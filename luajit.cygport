@@ -1,0 +1,52 @@
+NAME="luajit"
+VERSION="2.1.0-beta3-20230221"
+REVISION="505e2c03de35e2718eef0d2d3660712e06dadf1f"
+RELEASE=1
+CATEGORY="Interpreters"
+SUMMARY="Lua Just-in-Time compiler"
+DESCRIPTION="LuaJIT is a Just-In-Time Compiler (JIT) for the Lua programming
+language. Lua is a powerful, dynamic and light-weight programming language.
+It may be embedded or used as a general-purpose, stand-alone language."
+HOMEPAGE="http://luajit.org/"
+SRC_URI="https://github.com/LuaJIT/LuaJIT/archive/${REVISION}.zip"
+SRC_DIR="LuaJIT-${REVISION}"
+PATCH_URI="configure-prefix.patch"
+
+PKG_NAMES="luajit luajit-devel"
+luajit_CONTENTS="
+	usr/bin/cygluajit-5.1-${VERSION%%\.*}.dll
+	usr/bin/luajit.exe
+	usr/share/doc/
+	usr/share/luajit-${VERSION%%-[0-9]*}/
+	usr/share/man/man1/luajit.1*
+"
+luajit_devel_CONTENTS="
+	usr/include/luajit-${VERSION%\.*}/
+	usr/lib/libluajit-5.1.dll.a
+	usr/lib/pkgconfig/luajit.pc
+"
+REQUIRES_EXCLUDE_FROM="/usr/share/luajit-${VERSION%%-[0-9]*}/\*"
+
+src_compile() {
+	lndirs
+	cd ${B}/src
+	CFLAGS+=" -fexceptions"
+	cygmake all \
+		Q=  E=@: \
+		PREFIX=/usr \
+		LUAJIT_SO="cygluajit-\$(ABIVER)-\$(MAJVER).dll" \
+		TARGET_XSHLDFLAGS="-shared -Wl,--out-implib,libluajit-\$(ABIVER).dll.a" \
+		TARGET_STRIP=:
+}
+
+src_install() {
+	cd ${B}
+	cyginstall \
+		PREFIX=/usr \
+		FILE_SO="libluajit-\$(ABIVER).dll.a" \
+		FILE_T="luajit.exe cygluajit-\$(ABIVER)-\$(MAJVER).dll" \
+		INSTALL_SONAME="libluajit-\$(ABIVER).dll.a" \
+		INSTALL_SOSHORT="libluajit-\$(ABIVER).dll.a" \
+		INSTALL_TNAME= \
+		LDCONFIG=: RM=: SYMLINK=:
+}
