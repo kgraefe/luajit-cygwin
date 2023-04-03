@@ -13,6 +13,7 @@ SRC_DIR="LuaJIT-${REVISION}"
 PATCH_URI="
 	configure-prefix.patch
 	fix-pkgconfig.patch
+	fix-c-pkg-search-paths.patch
 "
 
 PKG_NAMES="luajit luajit-devel"
