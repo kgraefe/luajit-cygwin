@@ -10,7 +10,10 @@ It may be embedded or used as a general-purpose, stand-alone language."
 HOMEPAGE="http://luajit.org/"
 SRC_URI="https://github.com/LuaJIT/LuaJIT/archive/${REVISION}.zip"
 SRC_DIR="LuaJIT-${REVISION}"
-PATCH_URI="configure-prefix.patch"
+PATCH_URI="
+	configure-prefix.patch
+	fix-pkgconfig.patch
+"
 
 PKG_NAMES="luajit luajit-devel"
 luajit_CONTENTS="

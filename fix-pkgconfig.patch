@@ -1,0 +1,23 @@
+diff --git etc/luajit.pc etc/luajit.pc
+index 39e1e577..4a97fa80 100644
+--- etc/luajit.pc
++++ etc/luajit.pc
+@@ -5,15 +5,15 @@ relver=0
+ version=${majver}.${minver}.${relver}-beta3
+ abiver=5.1
+ 
+-prefix=/usr/local
++prefix=/usr
+ multilib=lib
+ exec_prefix=${prefix}
+ libdir=${exec_prefix}/${multilib}
+ libname=luajit-${abiver}
+ includedir=${prefix}/include/luajit-${majver}.${minver}
+ 
+-INSTALL_LMOD=${prefix}/share/lua/${abiver}
+-INSTALL_CMOD=${prefix}/${multilib}/lua/${abiver}
++INSTALL_LMOD=${prefix}/share/lua/luajit-${version}
++INSTALL_CMOD=${prefix}/${multilib}/luajit-${version}
+ 
+ Name: LuaJIT
+ Description: Just-in-time compiler for Lua
