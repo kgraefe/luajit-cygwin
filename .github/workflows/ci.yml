@@ -1,0 +1,68 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail -o igncr {0}
+    env:
+      PATH: C:\cygwin\bin
+    steps:
+      - name: Install Cygwin Git and cygport
+        uses: cygwin/cygwin-install-action@v2
+        with:
+          packages: git cygport
+        timeout-minutes: 10
+      - name: Manually configure safe.directory
+        run: git config --global --add safe.directory '*'
+        timeout-minutes: 1
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          set-safe-directory: false  # actions/checkout otherwise tries to use the wrong config file, per actions/checkout#767
+          fetch-depth: 0  # Need this to push to Cygwin Git mirror
+        timeout-minutes: 1
+      - name: Generate cygcheck output
+        if: always()
+        run: cygcheck -srv >/var/log/cygcheck.out
+        timeout-minutes: 5
+      - name: Store Cygwin logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cygwin-logs
+          path: 'C:\cygwin\var\log\'
+        timeout-minutes: 5
+      - name: Cygport download
+        run: cygport luajit.cygport download
+        timeout-minutes: 5
+      - name: Cygport prep
+        run: cygport luajit.cygport prep
+        timeout-minutes: 1
+      - name: Cygport compile
+        run: cygport luajit.cygport compile
+        timeout-minutes: 30
+      - name: Cygport test
+        run: cygport luajit.cygport test
+        timeout-minutes: 300
+      - name: Cygport install
+        run: cygport luajit.cygport install
+        timeout-minutes: 30
+      - name: Cygport package
+        run: cygport luajit.cygport package
+        timeout-minutes: 5
+      - name: Tar up build results
+        if: always()
+        run: tar -caf luajit-build-results.txz luajit-*-*.*/
+        timeout-minutes: 10
+      - name: Store build results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-results
+          path: luajit-build-results.txz
+          if-no-files-found: error
+        timeout-minutes: 5
