@@ -1,5 +1,6 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   build-test:
     runs-on: windows-latest
@@ -36,6 +37,10 @@ jobs:
           name: cygwin-logs
           path: 'C:\cygwin\var\log\'
         timeout-minutes: 5
+      - name: Load variables from the cygport file
+        run: |
+          eval "$(cygport luajit.cygport vars PVR)"
+          printf 'PVR=%s\n' "$PVR" >>"$GITHUB_ENV"
       - name: Cygport download
         run: cygport luajit.cygport download
         timeout-minutes: 5
@@ -66,3 +71,14 @@ jobs:
           path: luajit-build-results.txz
           if-no-files-found: error
         timeout-minutes: 5
+      - name: Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-${{ env.PVR }}.tar.xz
+            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-${{ env.PVR }}-src.tar.xz
+            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-devel/luajit-devel-${{ env.PVR }}.tar.xz
+            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-debuginfo/luajit-debuginfo-${{ env.PVR }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
