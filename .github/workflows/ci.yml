@@ -39,7 +39,8 @@ jobs:
         timeout-minutes: 5
       - name: Load variables from the cygport file
         run: |
-          eval "$(cygport luajit.cygport vars PVR)"
+          eval "$(cygport luajit.cygport vars ARCH PVR)"
+          printf 'ARCH=%s\n' "$ARCH" >>"$GITHUB_ENV"
           printf 'PVR=%s\n' "$PVR" >>"$GITHUB_ENV"
       - name: Cygport download
         run: cygport luajit.cygport download
@@ -59,26 +60,22 @@ jobs:
       - name: Cygport package
         run: cygport luajit.cygport package
         timeout-minutes: 5
-      - name: Tar up build results
-        if: always()
-        run: tar -caf luajit-build-results.txz luajit-*-*.*/
-        timeout-minutes: 10
+      - name: Tar up dist directory
+        run: |
+          cd luajit-$PVR.$ARCH/dist
+          tar -cJvaf luajist-dist-$PVR.$ARCH.tar.xz luajit/
       - name: Store build results
-        if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: build-results
-          path: luajit-build-results.txz
+          name: luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
+          path: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
           if-no-files-found: error
         timeout-minutes: 5
       - name: Release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-${{ env.PVR }}.tar.xz
-            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-${{ env.PVR }}-src.tar.xz
-            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-devel/luajit-devel-${{ env.PVR }}.tar.xz
-            luajit-${{ env.PVR }}.x86_64/dist/luajit/luajit-debuginfo/luajit-debuginfo-${{ env.PVR }}.tar.xz
+          fail_on_unmatched_files: true
+          files: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
