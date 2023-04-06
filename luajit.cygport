@@ -1,7 +1,8 @@
 NAME="luajit"
-VERSION="2.1.0-beta3-20230221"
+VERSION="2.1.0_beta3_20230221"
+SRC_VERSION="2.1.0-beta3"
 REVISION="505e2c03de35e2718eef0d2d3660712e06dadf1f"
-RELEASE=2
+RELEASE=3
 CATEGORY="Interpreters"
 SUMMARY="Lua Just-in-Time compiler"
 DESCRIPTION="LuaJIT is a Just-In-Time Compiler (JIT) for the Lua programming
@@ -19,18 +20,18 @@ PATCH_URI="
 
 PKG_NAMES="luajit luajit-devel"
 luajit_CONTENTS="
-	usr/bin/cygluajit-5.1-${VERSION%%\.*}.dll
+	usr/bin/cygluajit-5.1-${SRC_VERSION%%\.*}.dll
 	usr/bin/luajit.exe
 	usr/share/doc/
-	usr/share/luajit-${VERSION%%-[0-9]*}/
+	usr/share/luajit-${SRC_VERSION}/
 	usr/share/man/man1/luajit.1*
 "
 luajit_devel_CONTENTS="
-	usr/include/luajit-${VERSION%\.*}/
+	usr/include/luajit-${SRC_VERSION%\.*}/
 	usr/lib/libluajit-5.1.dll.a
 	usr/lib/pkgconfig/luajit.pc
 "
-REQUIRES_EXCLUDE_FROM="/usr/share/luajit-${VERSION%%-[0-9]*}/\*"
+REQUIRES_EXCLUDE_FROM="/usr/share/luajit-${SRC_VERSION}/\*"
 
 src_compile() {
 	lndirs
