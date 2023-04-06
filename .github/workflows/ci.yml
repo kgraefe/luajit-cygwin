@@ -63,12 +63,12 @@ jobs:
       - name: Tar up dist directory
         run: |
           cd luajit-$PVR.$ARCH/dist
-          tar -cJvaf luajist-dist-$PVR.$ARCH.tar.xz luajit/
+          tar -cJvaf luajit-dist-$PVR.$ARCH.tar.xz luajit/
       - name: Store build results
         uses: actions/upload-artifact@v2
         with:
-          name: luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
-          path: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
+          name: luajit-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
+          path: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajit-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
           if-no-files-found: error
         timeout-minutes: 5
       - name: Release
@@ -76,6 +76,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          files: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajist-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
+          files: luajit-${{ env.PVR }}.${{ env.ARCH }}/dist/luajit-dist-${{ env.PVR }}.${{ env.ARCH }}.tar.xz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
