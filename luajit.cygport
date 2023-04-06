@@ -1,7 +1,7 @@
 NAME="luajit"
 VERSION="2.1.0-beta3-20230221"
 REVISION="505e2c03de35e2718eef0d2d3660712e06dadf1f"
-RELEASE=1
+RELEASE=2
 CATEGORY="Interpreters"
 SUMMARY="Lua Just-in-Time compiler"
 DESCRIPTION="LuaJIT is a Just-In-Time Compiler (JIT) for the Lua programming
